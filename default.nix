@@ -26,16 +26,17 @@ let
     kernels ? defaultKernels,
     extraPackages ? defaultExtraPackages,
     extraInputsFrom ? defaultExtraInputsFrom,
+    extraPythonPath ? [],
     extraJupyterPath ? _: ""
     }:
     let
       # PYTHONPATH setup for JupyterLab
-      pythonPath = python3.makePythonPath [
+      pythonPath = python3.makePythonPath ([
         python3.ipykernel
         python3.jupyter_contrib_core
         python3.jupyter_nbextensions_configurator
         python3.tornado
-      ];
+      ] ++ (extraPythonPath python3));
 
       # JupyterLab executable wrapped with suitable environment variables.
       jupyterlab = python3.toPythonModule (
