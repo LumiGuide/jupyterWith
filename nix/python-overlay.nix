@@ -60,8 +60,23 @@ let
         maintainers = [];
       };
     };
-  };
 
+    jupyterhub-systemdspawner = pythonPackages.buildPythonPackage rec {
+      pname = "jupyterhub-systemdspawner";
+      version = "0.11";
+      src = pythonPackages.fetchPypi {
+        inherit pname version;
+        sha256 = "0z4sy0k413w1z7ywrijfk2p01ym83k4nlnbkn3vzkzpgqnc5r5rl";
+      };
+      checkPhase = "py.test systemdspawner/tests";
+      doCheck = false;
+      patchPhase = ''
+        substituteInPlace systemdspawner/systemd.py \
+          --replace "'/bin/bash'" "'${pkgs.bash}/bin/bash'"
+      '';
+      propagatedBuildInputs = [ pythonPackages.jupyterhub ];
+    };
+  };
 in
 
 {
